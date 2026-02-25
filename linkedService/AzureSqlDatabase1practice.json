@@ -1,0 +1,17 @@
+{
+	"name": "AzureSqlDatabase1practice",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "serverforsqlpracticedb.database.windows.net",
+			"database": "sqldbforproject",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "adminaniket",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDg4RTkyNkVELTMzMUQtNDAzMS04RjE4LUYxRkFFMEJERjFGRl82YzFjZDgwNC1lZTNmLTRjOTQtYTAwMC04MDRjZTgxZWJmNTYiDQp9"
+		}
+	}
+}
