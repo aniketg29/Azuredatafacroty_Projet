@@ -42,7 +42,7 @@
 								"source": {
 									"type": "AzureSqlSource",
 									"sqlReaderQuery": {
-										"value": "Select * from @{pipeline().parameters.schema}.@{pipeline().parameters.table} where @{pipeline().parameters.cdc_col} > '@{if(empty(pipeline().parameters.from_date), activity('last_cdc').output.value[0].cdc, pipeline().parameters.from_date)}'",
+										"value": "Select * from @{item().schema}.@{item().table} where @{item().cdc_col} > '@{if(empty(item().from_date), activity('last_cdc').output.value[0].cdc, item().from_date)}'",
 										"type": "Expression"
 									},
 									"queryTimeout": "02:00:00",
@@ -117,7 +117,10 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"Container": "bronze",
-										"Folder": "cdc",
+										"Folder": {
+											"value": "@{item().table}_cdc",
+											"type": "Expression"
+										},
 										"File": "cdc.json"
 									}
 								},
@@ -254,7 +257,10 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"Container": "bronze",
-													"Folder": "cdc",
+													"Folder": {
+														"value": "@{item().table}_cdc",
+														"type": "Expression"
+													},
 													"File": "empty.json"
 												}
 											}
@@ -265,8 +271,14 @@
 												"type": "DatasetReference",
 												"parameters": {
 													"Container": "bronze",
-													"Folder": "cdc",
-													"File": "cdc.json"
+													"Folder": {
+														"value": "@item().table",
+														"type": "Expression"
+													},
+													"File": {
+														"value": "@concat(item().table,'_', variables('current'))",
+														"type": "Expression"
+													}
 												}
 											}
 										]
@@ -292,7 +304,7 @@
 												{
 													"type": "Query",
 													"text": {
-														"value": "select max(@{pipeline().parameters.cdc_col}) as cdc FROM @{pipeline().parameters.schema}.@{pipeline().parameters.table}",
+														"value": "select max(@{item().cdc_col}) as cdc FROM @{item().schema}.@{item().table}",
 														"type": "Expression"
 													}
 												}
@@ -308,17 +320,40 @@
 			}
 		],
 		"parameters": {
-			"schema": {
-				"type": "string"
-			},
-			"table": {
-				"type": "string"
-			},
-			"cdc_col": {
-				"type": "string"
-			},
-			"from_date": {
-				"type": "string"
+			"loop_input": {
+				"type": "array",
+				"defaultValue": [
+					{
+						"schema": "dbo",
+						"table": "DimUser",
+						"cdc_col": "updated_at",
+						"from_date": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "DimTrack",
+						"cdc_col": "updated_at",
+						"from_date": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "DimDate",
+						"cdc_col": "date",
+						"from_date": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "DimArtist",
+						"cdc_col": "updated_at",
+						"from_date": ""
+					},
+					{
+						"schema": "dbo",
+						"table": "FactStream",
+						"cdc_col": "stream_timestamp",
+						"from_date": ""
+					}
+				]
 			}
 		},
 		"variables": {
